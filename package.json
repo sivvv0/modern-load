@@ -1,0 +1,42 @@
+{
+  "name": "modern-load",
+  "version": "0.0.1",
+  "description": "A modernized, feature-rich version of the original 'load' package with ESM, watch mode, source maps, events, and browser support",
+  "main": "index.js",
+  "browser": "browser.js",
+  "type": "module",
+  "exports": {
+    "node": {
+      "import": "./index.js",
+      "require": "./index.js"
+    },
+    "browser": "./browser.js",
+    "default": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "browser.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "load",
+    "dynamic",
+    "module",
+    "global",
+    "import",
+    "async",
+    "watch",
+    "sourcemap",
+    "events",
+    "browser"
+  ],
+  "author": "s1vann",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
