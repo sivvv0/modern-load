@@ -54,6 +54,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -69,17 +71,28 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json
-          git commit -m "chore: bump version to $(node -p "require('./package.json').version") [skip ci]"
+          git commit -m "chore: bump version to ${{ env.PACKAGE_VERSION }} [skip ci]"
           git push
+      
+      - name: Get package version
+        if: github.event_name == 'release'
+        run: |
+          echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
       
       - name: Build package (if needed)
         run: |
           if [ -f "build.js" ]; then node build.js; fi
           if grep -q '"build"' package.json; then npm run build; fi
         continue-on-error: true
+      
+      - name: Verify package contents
+        run: |
+          echo "📦 Package contents:"
+          npm pack --dry-run
       
       - name: Publish to npm
         run: npm publish
@@ -113,7 +126,7 @@ jobs:
       - name: Notify on success
         if: success()
         run: |
-          echo "✅ Successfully published modern-load@$(node -p "require('./package.json').version")"
+          echo "✅ Successfully published modern-load@${{ env.PACKAGE_VERSION }}"
           echo "📦 View package: https://www.npmjs.com/package/modern-load"
       
       - name: Notify on failure
