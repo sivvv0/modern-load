@@ -11,6 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Modernized load module with advanced features
+ discord:- s1vann
  */
 class Loader extends EventEmitter {
   constructor(options = {}) {
