@@ -401,7 +401,30 @@ hmr.register('app', './app.js');
 ```
 
 # 🌐 Browser Compatibility
+```html
+<!-- Using ES modules -->
+<script type="module">
+  import { BrowserLoader } from 'https://cdn.jsdelivr.net/npm/modern-load/browser.js';
+  
+  const loader = new BrowserLoader();
+  const exports = await loader.file('https://example.com/my-script.js', {
+    cache: true,
+    ttl: 30000
+  });
+  
+  console.log('Loaded:', exports);
+</script>
 
+<!-- Or using script tag -->
+<script src="https://cdn.jsdelivr.net/npm/modern-load/browser.js"></script>
+<script>
+  const loader = window.ModernLoad.default;
+  
+  loader.file('https://example.com/library.js')
+    .then(exports => console.log('Library loaded:', exports))
+    .catch(err => console.error('Error:', err));
+</script>
+```
 The browser version uses:
 
 - `fetch()` for loading remote scripts
