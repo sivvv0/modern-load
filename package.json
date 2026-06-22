@@ -1,6 +1,6 @@
 {
   "name": "modern-load",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A modernized, feature-rich version of the original 'load' package with ESM, watch mode, source maps, events, and browser support",
   "main": "index.js",
   "browser": "browser.js",
