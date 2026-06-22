@@ -1,0 +1,123 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (patch, minor, major, or specific version)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+
+jobs:
+  test:
+    name: Test Package
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x, 20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+        env:
+          CI: true
+
+  publish-npm:
+    name: Publish to npm
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Bump version
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to $(node -p "require('./package.json').version") [skip ci]"
+          git push
+      
+      - name: Build package (if needed)
+        run: |
+          if [ -f "build.js" ]; then node build.js; fi
+          if grep -q '"build"' package.json; then npm run build; fi
+        continue-on-error: true
+      
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Create GitHub Release
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.PACKAGE_VERSION }}
+          release_name: Release v${{ env.PACKAGE_VERSION }}
+          draft: false
+          prerelease: ${{ contains(github.event.inputs.version, 'pre') }}
+          body: |
+            ## 🚀 Release v${{ env.PACKAGE_VERSION }}
+            
+            ### Installation
+            ```bash
+            npm install modern-load@${{ env.PACKAGE_VERSION }}
+            ```
+            
+            ### Changelog
+            - See [CHANGELOG.md](CHANGELOG.md) for details
+            
+            ### Full Commits
+            ${{ github.event.head_commit.url || github.event.compare }}
+      
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ Successfully published modern-load@$(node -p "require('./package.json').version")"
+          echo "📦 View package: https://www.npmjs.com/package/modern-load"
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Failed to publish package"
+          exit 1
