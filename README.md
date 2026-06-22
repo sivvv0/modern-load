@@ -1,23 +1,19 @@
-📦 modern-load
+# 📦 modern-load
 
 A modernized, feature-rich version of the original load package with ESM, watch mode, source maps, events, and browser support
 
-https://badge.fury.io/js/modern-load.svg
-https://img.shields.io/badge/License-MIT-yellow.svg
-https://img.shields.io/node/v/modern-load.svg
+**✨ Features**
 
-✨ Features
-
-· 🚀 Promise-based API - Async/await ready with full Promise support
-· 📦 ES Module Support - Load .mjs files natively with import()
-· 👁️ Watch Mode - Auto-reload modules on file changes (great for development)
-· 🗺️ Source Map Support - Better debugging with original code traces
-· 📡 Event Emitter Interface - Real-time feedback for all operations
-· 🌐 Browser Support - Same API works in browsers via fetch + eval
-· 💾 Cache Control - Built-in caching with TTL support
-· 🔒 Sandbox/Context Isolation - Secure execution in isolated contexts
-· ⏱️ Timeout Control - Prevent infinite loops or long-running scripts
-· 🛡️ Better Error Messages - Clear, actionable error reporting
+* 🚀 Promise-based API - Async/await ready with full Promise support
+* 📦 ES Module Support - Load .mjs files natively with import()
+* 👁️ Watch Mode - Auto-reload modules on file changes (great for development)
+* 🗺️ Source Map Support - Better debugging with original code traces
+* 📡 Event Emitter Interface - Real-time feedback for all operations
+* 🌐 Browser Support - Same API works in browsers via fetch + eval
+* 💾 Cache Control - Built-in caching with TTL support
+* 🔒 Sandbox/Context Isolation - Secure execution in isolated contexts
+* ⏱️ Timeout Control - Prevent infinite loops or long-running scripts
+* 🛡️ Better Error Messages - Clear, actionable error reporting
 
 📦 Installation
 
@@ -215,80 +211,85 @@ loader.on('load:sourcemap', ({ filePath, sourceMap }) => {
 });
 ```
 
-🎯 API Reference
+# 🎯 API Reference
 
-load.file(filePath, options)
+## load.file(filePath, options)
 
 Loads a JavaScript file and returns its exported globals.
 
-Parameter Type Description
-filePath string Path to the JavaScript file
-options.cache boolean Enable caching (default: false)
-options.ttl number Cache TTL in milliseconds (default: 60000)
-options.sourceMaps boolean Enable source map support
-options.timeout number Execution timeout in milliseconds
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `filePath` | `string` | Path to the JavaScript file |
+| `options.cache` | `boolean` | Enable caching (default: `false`) |
+| `options.ttl` | `number` | Cache TTL in milliseconds (default: `60000`) |
+| `options.sourceMaps` | `boolean` | Enable source map support |
+| `options.timeout` | `number` | Execution timeout in milliseconds |
 
-Returns: Promise<Object> - Exported globals
+**Returns:** `Promise<Object>` - Exported globals
 
 ---
 
-load.script(scriptCode, options)
+## load.script(scriptCode, options)
 
 Executes a script string and returns its globals.
 
-Parameter Type Description
-scriptCode string JavaScript code to execute
-options.sourceMaps boolean Enable source map support
-options.timeout number Execution timeout in milliseconds
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `scriptCode` | `string` | JavaScript code to execute |
+| `options.sourceMaps` | `boolean` | Enable source map support |
+| `options.timeout` | `number` | Execution timeout in milliseconds |
 
-Returns: Promise<Object> - Exported globals
+**Returns:** `Promise<Object>` - Exported globals
 
 ---
 
-load.watch(filePath, callback, options)
+## load.watch(filePath, callback, options)
 
 Watches a file and auto-reloads on changes.
 
-Parameter Type Description
-filePath string Path to the file to watch
-callback function Called on each reload
-options Object Same as load.file() options
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `filePath` | `string` | Path to the file to watch |
+| `callback` | `function` | Called on each reload |
+| `options` | `Object` | Same as `load.file()` options |
 
-Returns: Object - Watcher with close() and reload() methods
+**Returns:** `Object` - Watcher with `close()` and `reload()` methods
 
 ---
 
-load.clearCache(filePath)
+## load.clearCache(filePath)
 
 Clears the cache for a specific file or all files.
 
-Parameter Type Description
-filePath string Optional - Clear specific file
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `filePath` | `string` | Optional - Clear specific file |
 
 ---
 
-load.stopAllWatchers()
+## load.stopAllWatchers()
 
 Stops all active file watchers.
 
 ---
 
-📡 Events
+# 📡 Events
 
-The Loader class emits the following events:
+The `Loader` class emits the following events:
 
-Event Payload Description
-load:start { filePath, options } Before loading starts
-load:done { filePath, exports } Loading completed successfully
-load:error { filePath, error } Loading failed
-load:cache { filePath, exports } Using cached version
-load:sourcemap { filePath, sourceMap } Source map loaded
-watch:change { filePath, eventType } File changed
-watch:reload { filePath, exports } File reloaded successfully
-watch:error { filePath, error } Watch error occurred
-watch:initial { filePath, exports } First load in watch mode
-watch:stop { filePath } Watcher stopped
-cache:clear { filePath or all: true } Cache cleared
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `load:start` | `{ filePath, options }` | Before loading starts |
+| `load:done` | `{ filePath, exports }` | Loading completed successfully |
+| `load:error` | `{ filePath, error }` | Loading failed |
+| `load:cache` | `{ filePath, exports }` | Using cached version |
+| `load:sourcemap` | `{ filePath, sourceMap }` | Source map loaded |
+| `watch:change` | `{ filePath, eventType }` | File changed |
+| `watch:reload` | `{ filePath, exports }` | File reloaded successfully |
+| `watch:error` | `{ filePath, error }` | Watch error occurred |
+| `watch:initial` | `{ filePath, exports }` | First load in watch mode |
+| `watch:stop` | `{ filePath }` | Watcher stopped |
+| `cache:clear` | `{ filePath }` or `{ all: true }` | Cache cleared |
 
 🔧 Configuration
 
@@ -399,13 +400,13 @@ const hmr = new HotModule();
 hmr.register('app', './app.js');
 ```
 
-🌐 Browser Compatibility
+# 🌐 Browser Compatibility
 
 The browser version uses:
 
-· fetch() for loading remote scripts
-· Function() constructor for safe code execution
-· EventEmitter polyfill for event handling
+- `fetch()` for loading remote scripts
+- `Function()` constructor for safe code execution
+- `EventEmitter` polyfill for event handling
 
 Supported browsers: Chrome 60+, Firefox 60+, Safari 12+, Edge 79+
 
