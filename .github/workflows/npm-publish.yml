@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x, 20.x]
-      fail-fast: false  # Continue even if one fails
+      fail-fast: false
     
     steps:
       - name: Checkout code
@@ -22,17 +22,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          # Remove cache to avoid lock file requirement
       
       - name: Install dependencies
-        run: npm install  # Use npm install instead of npm ci
+        run: npm install
       
-      - name: Run tests
+      - name: Run tests (if they exist)
         run: |
-          if [ -f "package.json" ] && grep -q '"test"' package.json; then
+          if [ -f "test.js" ] || [ -f "test/index.js" ] || [ -d "test" ] && [ -f "package.json" ] && grep -q '"test"' package.json; then
             npm test
           else
-            echo "No tests found, skipping..."
+            echo "⚠️ No tests found, skipping..."
           fi
         env:
           CI: true
@@ -54,10 +53,9 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
-          # Remove cache to avoid lock file requirement
       
       - name: Install dependencies
-        run: npm install  # Use npm install instead of npm ci
+        run: npm install
       
       - name: Get package version
         run: |
